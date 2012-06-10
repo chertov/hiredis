@@ -1240,6 +1240,13 @@ int redisAppendCommandArgv(redisContext *c, int argc, const char **argv, const s
     return REDIS_OK;
 }
 
+int redisAppendCommandArgv1(redisContext *c, const char* cmd, const size_t len) {
+	if (__redisAppendCommand(c,cmd,len) != REDIS_OK) {
+		return REDIS_ERR;
+	}
+	return REDIS_OK;
+}
+
 /* Helper function for the redisCommand* family of functions.
  *
  * Write a formatted command to the output buffer. If the given context is
@@ -1281,4 +1288,10 @@ void *redisCommandArgv(redisContext *c, int argc, const char **argv, const size_
     if (redisAppendCommandArgv(c,argc,argv,argvlen) != REDIS_OK)
         return NULL;
     return __redisBlockForReply(c);
+}
+
+void *redisCommandArgv1(redisContext *c, const char *cmd, const size_t len) {
+	if (redisAppendCommandArgv1(c, cmd, len) != REDIS_OK)
+		return NULL;
+	return __redisBlockForReply(c);
 }
